@@ -1,0 +1,32 @@
+settings = 
+{
+	orientation =
+	{
+	    default = "portrait",
+		supported = { "portrait", "portraitUpsideDown" },
+	},
+	android =
+		{
+			--usesExpansionFile = true,
+			usesPermissions =
+			{
+				"android.permission.INTERNET",
+				"com.android.vending.CHECK_LICENSE",
+				"android.permission.WRITE_EXTERNAL_STORAGE",
+                -- Permission to retrieve current location from the GPS
+                "android.permission.ACCESS_FINE_LOCATION",
+                -- Permission to retrieve current location from WiFi or cellular service
+                "android.permission.ACCESS_COARSE_LOCATION",
+			},
+		},
+	iphone =
+	{
+		xcassets = "Images.xcassets",
+		plist =
+        {
+            UILaunchStoryboardName = "LaunchScreen",  -- Required!
+            UIStatusBarHidden = true,
+        },
+	},
+}
+

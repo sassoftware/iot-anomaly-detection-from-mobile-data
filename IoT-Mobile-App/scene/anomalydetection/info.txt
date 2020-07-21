@@ -1,0 +1,12 @@
+Anomaly Detection 
+
+This example uses subspace tracking and kmeans to detect anomalies based on accelerator data.  Both analytical methods create dynamically calculate models based on sampling data from a 30 second moving window. 
+
+RELATED LINKS:
+[SAS IoT Home](https://www.sas.com/en_us/solutions/iot.html)
+[SAS Analytics for IoT](https://www.sas.com/en_us/software/analytics-iot.html)
+
+
+
+
+

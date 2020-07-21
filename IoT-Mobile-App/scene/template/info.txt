@@ -1,0 +1,10 @@
+Template example information panel content
+
+RELATED LINKS:
+[SAS IoT Home](https://www.sas.com/en_us/solutions/iot.html)
+[SAS Analytics for IoT](https://www.sas.com/en_us/software/analytics-iot.html)
+
+
+
+
+

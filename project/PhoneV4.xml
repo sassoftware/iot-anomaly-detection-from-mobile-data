@@ -1,0 +1,305 @@
+<project name="PhoneV4" pubsub="auto" threads="3" heartbeat-interval="1" use-tagged-token="true">
+  <metadata>
+    <meta id="studioUploadedBy">anonymousUser</meta>
+    <meta id="studioUploaded">1589469269298</meta>
+    <meta id="studioModifiedBy">anonymousUser</meta>
+    <meta id="studioModified">1591624861125</meta>
+    <meta id="layout">{"CQ":{"AnomalyDetection":{"x":290,"y":775},"Kmeans_scoring":{"x":500,"y":585},"Kmeans_training":{"x":665,"y":450},"Retain3001":{"x":0,"y":0},"Retain300Copy1":{"x":null,"y":null},"Retain300Records":{"x":350,"y":210},"SubSpaceTracking":{"x":210,"y":580},"SummaryStatCalculate1":{"x":null,"y":null},"SummaryStats":{"x":350,"y":325},"SummaryStatsYgra":{"x":null,"y":null},"SumyStatsYgravity":{"x":95,"y":-40},"mqtt_connector":{"x":350,"y":-15},"parse_json_message":{"x":350,"y":95}},"contquery":{"addCurrentTimeandDummy":{"x":75,"y":-600},"aggLagTriggerRecord":{"x":null,"y":null},"mqtt_connector":{"x":75,"y":-730}}}</meta>
+  </metadata>
+  <contqueries>
+    <contquery name="CQ" timing-threshold="50">
+      <windows>
+        <window-source pubsub="true" insert-only="true" autogen-key="true" index="pi_EMPTY" name="mqtt_connector">
+          <schema>
+            <fields>
+              <field name="ID" type="int64" key="true"/>
+              <field name="topic" type="string"/>
+              <field name="message" type="string"/>
+            </fields>
+          </schema>
+          <connectors>
+            <connector class="mqtt" name="iotdepot" active="false">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="noautogenfield"><![CDATA[true]]></property>
+                <property name="addcsvopcode"><![CDATA[true]]></property>
+                <property name="addcsvflags"><![CDATA[normal]]></property>
+                <property name="mqtthost"><![CDATA[test.mosquitto.org]]></property>
+                <property name="mqttclientid"><![CDATA[NULL]]></property>
+                <property name="mqtttopic"><![CDATA[PhoneSensors]]></property>
+                <property name="mqttqos"><![CDATA[0]]></property>
+                <property name="mqttmsgtype"><![CDATA[opaquestring]]></property>
+              </properties>
+            </connector>
+            <connector class="mqtt" name="test_mosquitto_org">
+              <properties>
+                <property name="type"><![CDATA[pub]]></property>
+                <property name="noautogenfield"><![CDATA[true]]></property>
+                <property name="addcsvopcode"><![CDATA[true]]></property>
+                <property name="addcsvflags"><![CDATA[normal]]></property>
+                <property name="mqtthost"><![CDATA[test.mosquitto.org]]></property>
+                <property name="mqttclientid"><![CDATA[NULL]]></property>
+                <property name="mqtttopic"><![CDATA[PhoneSensors]]></property>
+                <property name="mqttqos"><![CDATA[0]]></property>
+                <property name="mqttmsgtype"><![CDATA[opaquestring]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-source>
+        <window-functional pubsub="true" index="pi_EMPTY" name="parse_json_message">
+          <description><![CDATA[Parse json data into ESP fields.]]></description>
+          <schema>
+            <fields>
+              <field name="ID" type="int64" key="true"/>
+              <field name="topic" type="string"/>
+              <field name="deviceID" type="string" key="true"/>
+              <field name="speed" type="double"/>
+              <field name="longitude" type="double"/>
+              <field name="latitude" type="double"/>
+              <field name="isShake" type="int32"/>
+              <field name="timestamp" type="stamp"/>
+              <field name="direction" type="double"/>
+              <field name="altitude" type="double"/>
+              <field name="yGravity" type="double"/>
+              <field name="xGravity" type="double"/>
+              <field name="zGravity" type="double"/>
+              <field name="yInstant" type="double"/>
+              <field name="xInstant" type="double"/>
+              <field name="zInstant" type="double"/>
+            </fields>
+          </schema>
+          <function-context>
+            <properties>
+              <property-json name="jsonData"><![CDATA[$message]]></property-json>
+            </properties>
+            <functions>
+              <function name="ID_message"><![CDATA[eventCounter()]]></function>
+              <function name="deviceID"><![CDATA[json(#jsonData,'deviceID')]]></function>
+              <function name="longitude"><![CDATA[json(#jsonData,'longitude')]]></function>
+              <function name="latitude"><![CDATA[json(#jsonData,'latitude')]]></function>
+              <function name="isShake"><![CDATA[json(#jsonData,'isShake')]]></function>
+              <function name="speed"><![CDATA[json(#jsonData,'speed')]]></function>
+              <function name="timestamp"><![CDATA[json(#jsonData,'timestamp')]]></function>
+              <function name="direction"><![CDATA[json(#jsonData,'direction')]]></function>
+              <function name="altitude"><![CDATA[json(#jsonData,'altitude')]]></function>
+              <function name="yGravity"><![CDATA[json(#jsonData,'y_acc')]]></function>
+              <function name="xGravity"><![CDATA[json(#jsonData,'x_acc')]]></function>
+              <function name="zGravity"><![CDATA[json(#jsonData,'z_acc')]]></function>
+              <function name="yInstant"><![CDATA[json(#jsonData,'y_gyro')]]></function>
+              <function name="xInstant"><![CDATA[json(#jsonData,'x_gyro')]]></function>
+              <function name="zInstant"><![CDATA[json(#jsonData,'z_gyro')]]></function>
+            </functions>
+          </function-context>
+        </window-functional>
+        <window-calculate pubsub="true" algorithm="SST" index="pi_EMPTY" name="SubSpaceTracking">
+          <schema>
+            <fields>
+              <field name="ID" type="int64" key="true"/>
+              <field name="topic" type="string"/>
+              <field name="deviceID" type="string"/>
+              <field name="xGravity" type="double"/>
+              <field name="yGravity" type="double"/>
+              <field name="zGravity" type="double"/>
+              <field name="PCAngleChangeOut" type="double"/>
+              <field name="PCAbsoluteAngleOut" type="double"/>
+              <field name="projAngleOut" type="double"/>
+              <field name="residualOut" type="double"/>
+              <field name="numRankOut" type="int32"/>
+              <field name="PCX" type="double"/>
+              <field name="PCY" type="double"/>
+              <field name="PCZ" type="double"/>
+            </fields>
+          </schema>
+          <parameters>
+            <properties>
+              <property name="windowLength"><![CDATA[300]]></property>
+              <property name="overlap"><![CDATA[-1]]></property>
+              <property name="maxPrincipal"><![CDATA[1]]></property>
+              <property name="covForgetFactor"><![CDATA[0.5]]></property>
+              <property name="meanForgetFactor"><![CDATA[0.5]]></property>
+              <property name="eigvalTolCumulative"><![CDATA[0.99]]></property>
+            </properties>
+          </parameters>
+          <input-map>
+            <properties>
+              <property name="inputs"><![CDATA[yGravity, xGravity, zGravity]]></property>
+            </properties>
+          </input-map>
+          <output-map>
+            <properties>
+              <property name="PCAngleChangeOut"><![CDATA[PCAngleChangeOut]]></property>
+              <property name="PCAbsoluteAngleOut"><![CDATA[PCAbsoluteAngleOut]]></property>
+              <property name="projAngleOut"><![CDATA[projAngleOut]]></property>
+              <property name="residualOut"><![CDATA[residualOut]]></property>
+              <property name="numRankOut"><![CDATA[numRankOut]]></property>
+              <property name="principalVecOut"><![CDATA[PCX,PCY,PCZ]]></property>
+            </properties>
+          </output-map>
+        </window-calculate>
+        <window-train name="Kmeans_training" pubsub="true" algorithm="KMEANS">
+          <parameters>
+            <properties>
+              <property name="nClusters"><![CDATA[3]]></property>
+              <property name="initSeed"><![CDATA[1]]></property>
+              <property name="dampingFactor"><![CDATA[0.8]]></property>
+              <property name="fadeOutFactor"><![CDATA[0.05]]></property>
+              <property name="disturbFactor"><![CDATA[0.01]]></property>
+              <property name="nInit"><![CDATA[50]]></property>
+              <property name="velocity"><![CDATA[1]]></property>
+              <property name="commitInterval"><![CDATA[25]]></property>
+            </properties>
+          </parameters>
+          <input-map>
+            <properties>
+              <property name="inputs"><![CDATA[xGravity, yGravity, zGravity]]></property>
+            </properties>
+          </input-map>
+        </window-train>
+        <window-score name="Kmeans_scoring" pubsub="true">
+          <schema>
+            <fields>
+              <field name="ID" type="int64" key="true"/>
+              <field name="topic" type="string"/>
+              <field name="deviceID" type="string"/>
+              <field name="speed" type="double"/>
+              <field name="yGravity" type="double"/>
+              <field name="xGravity" type="double"/>
+              <field name="zGravity" type="double"/>
+              <field name="model_id" type="int64"/>
+              <field name="seg" type="int32"/>
+              <field name="min_dist" type="double"/>
+              <field name="yGravityStd" type="double"/>
+              <field name="yGravityAverage" type="double"/>
+              <field name="xGravityStd" type="double"/>
+              <field name="xGravityAverage" type="double"/>
+              <field name="zGravityStd" type="double"/>
+              <field name="zGravityAverage" type="double"/>
+            </fields>
+          </schema>
+          <models>
+            <online algorithm="KMEANS">
+              <input-map>
+                <properties>
+                  <property name="inputs"><![CDATA[xGravity,yGravity,zGravity]]></property>
+                </properties>
+              </input-map>
+              <output-map>
+                <properties>
+                  <property name="labelOut"><![CDATA[seg]]></property>
+                  <property name="minDistanceOut"><![CDATA[min_dist]]></property>
+                  <property name="modelIdOut"><![CDATA[model_id]]></property>
+                </properties>
+              </output-map>
+            </online>
+          </models>
+        </window-score>
+        <window-copy pubsub="true" output-insert-only="true" name="Retain300Records">
+          <retention type="bycount_sliding"><![CDATA[300]]></retention>
+        </window-copy>
+        <window-aggregate pubsub="true" output-insert-only="true" name="SummaryStats">
+          <schema>
+            <fields>
+              <field name="ID" type="int64" key="true"/>
+              <field name="topic" type="string"/>
+              <field name="deviceID" type="string" key="true"/>
+              <field name="speed" type="double"/>
+              <field name="longitude" type="double"/>
+              <field name="latitude" type="double"/>
+              <field name="isShake" type="int32"/>
+              <field name="timestamp" type="stamp"/>
+              <field name="direction" type="double"/>
+              <field name="altitude" type="double"/>
+              <field name="yGravity" type="double"/>
+              <field name="yGravityStd" type="double"/>
+              <field name="yGravityAverage" type="double"/>
+              <field name="xGravity" type="double"/>
+              <field name="xGravityStd" type="double"/>
+              <field name="xGravityAverage" type="double"/>
+              <field name="zGravity" type="double"/>
+              <field name="zGravityStd" type="double"/>
+              <field name="zGravityAverage" type="double"/>
+              <field name="yInstant" type="double"/>
+              <field name="xInstant" type="double"/>
+              <field name="zInstant" type="double"/>
+            </fields>
+          </schema>
+          <output>
+            <field-expr><![CDATA[ESP_aLast(topic)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(speed)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(longitude)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(latitude)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(isShake)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(timestamp)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(direction)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(altitude)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(yGravity)]]></field-expr>
+            <field-expr><![CDATA[ESP_aStd(yGravity)]]></field-expr>
+            <field-expr><![CDATA[ESP_aAve(yGravity)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(xGravity)]]></field-expr>
+            <field-expr><![CDATA[ESP_aStd(xGravity)]]></field-expr>
+            <field-expr><![CDATA[ESP_aAve(xGravity)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(zGravity)]]></field-expr>
+            <field-expr><![CDATA[ESP_aStd(zGravity)]]></field-expr>
+            <field-expr><![CDATA[ESP_aAve(zGravity)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(yInstant)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(xInstant)]]></field-expr>
+            <field-expr><![CDATA[ESP_aLast(zInstant)]]></field-expr>
+          </output>
+        </window-aggregate>
+        <window-join pubsub="true" index="pi_EMPTY" name="AnomalyDetection">
+          <join type="inner">
+            <conditions>
+              <fields left="ID" right="ID"/>
+            </conditions>
+          </join>
+          <output>
+            <field-selection name="topic" source="l_topic"/>
+            <field-selection name="deviceID" source="l_deviceID"/>
+            <field-selection name="xGravity" source="l_xGravity"/>
+            <field-selection name="yGravity" source="l_yGravity"/>
+            <field-selection name="zGravity" source="l_zGravity"/>
+            <field-selection name="PCAngleChangeOut" source="l_PCAngleChangeOut"/>
+            <field-selection name="PCAbsoluteAngleOut" source="l_PCAbsoluteAngleOut"/>
+            <field-selection name="projAngleOut" source="l_projAngleOut"/>
+            <field-selection name="residualOut" source="l_residualOut"/>
+            <field-selection name="numRankOut" source="l_numRankOut"/>
+            <field-selection name="PCX" source="l_PCX"/>
+            <field-selection name="PCY" source="l_PCY"/>
+            <field-selection name="PCZ" source="l_PCZ"/>
+            <field-selection name="min_dist" source="r_min_dist"/>
+            <field-selection name="yGravityStd" source="r_yGravityStd"/>
+            <field-selection name="yGravityAverage" source="r_yGravityAverage"/>
+            <field-selection name="xGravityStd" source="r_xGravityStd"/>
+            <field-selection name="xGravityAverage" source="r_xGravityAverage"/>
+            <field-selection name="zGravityStd" source="r_zGravityStd"/>
+            <field-selection name="zGravityAverage" source="r_zGravityAverage"/>
+          </output>
+          <connectors>
+            <connector class="mqtt" name="MQTT_out">
+              <properties>
+                <property name="type"><![CDATA[sub]]></property>
+                <property name="snapshot"><![CDATA[false]]></property>
+                <property name="mqtthost"><![CDATA[test.mosquitto.org]]></property>
+                <property name="mqttclientid"><![CDATA[1234444223]]></property>
+                <property name="mqtttopic"><![CDATA[Outcomes]]></property>
+                <property name="mqttqos"><![CDATA[0]]></property>
+                <property name="mqttmsgtype"><![CDATA[json]]></property>
+              </properties>
+            </connector>
+          </connectors>
+        </window-join>
+      </windows>
+      <edges>
+        <edge source="mqtt_connector" target="parse_json_message"/>
+        <edge source="Kmeans_training" target="Kmeans_scoring" role="model"/>
+        <edge source="parse_json_message" target="Retain300Records"/>
+        <edge source="Retain300Records" target="SummaryStats"/>
+        <edge source="SummaryStats" target="SubSpaceTracking" role="data"/>
+        <edge source="SummaryStats" target="Kmeans_scoring" role="data"/>
+        <edge source="SummaryStats" target="Kmeans_training" role="data"/>
+        <edge source="SubSpaceTracking" target="AnomalyDetection" role="left"/>
+        <edge source="Kmeans_scoring" target="AnomalyDetection" role="right"/>
+      </edges>
+    </contquery>
+  </contqueries>
+</project>

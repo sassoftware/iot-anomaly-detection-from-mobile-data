@@ -1,0 +1,9 @@
+This sample project for IoT demonstrations.  This application provides two way MQTT communication to SAS Event Stream Processing.  Simply set up your MQTT broker to start streaming data to the SAS platform. 
+
+RELATED LINKS:
+[SAS Home](https://www.sas.com/en_us/home.html)
+[SAS IoT Home](https://www.sas.com/en_us/solutions/iot.html)
+[SAS Analytics for IoT](https://www.sas.com/en_us/software/analytics-iot.html)
+
+
+
