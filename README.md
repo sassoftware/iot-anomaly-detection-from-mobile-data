@@ -1,4 +1,4 @@
-# Anomaly Detection from Mobile Data
+# Detecting Anomalies using Mobile Movements and Gyroscopic Data
 
 This project will show how to collect live accelerometer and gyroscope data from a mobile device and pass it to Event Stream Processing (ESP) using an MQTT protocol.
 Once in ESP the JSON data is decoded and passed to the unsupervised machine learning models k-means and subspace tracking (SST).
